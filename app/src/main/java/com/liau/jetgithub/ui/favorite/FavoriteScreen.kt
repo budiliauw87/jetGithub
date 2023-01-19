@@ -1,4 +1,4 @@
-package com.liau.jetgithub.ui.screen
+package com.liau.jetgithub.ui.preference
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
  * Github github.com/budiliauw87
  */
 @Composable
-fun SettingScreen(titlePage: String) {
+fun FavoriteScreen(titlePage: String) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

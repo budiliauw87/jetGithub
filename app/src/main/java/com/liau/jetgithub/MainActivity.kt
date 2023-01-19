@@ -21,9 +21,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.liau.jetgithub.navigation.Screen
 import com.liau.jetgithub.ui.component.BottomBar
-import com.liau.jetgithub.ui.screen.FavoriteScreen
-import com.liau.jetgithub.ui.screen.HomeScreen
-import com.liau.jetgithub.ui.screen.SettingScreen
+import com.liau.jetgithub.ui.preference.FavoriteScreen
+import com.liau.jetgithub.ui.preference.HomeScreen
+import com.liau.jetgithub.ui.preference.PreferenceScreen
 import com.liau.jetgithub.ui.theme.JetGithubTheme
 
 class MainActivity : ComponentActivity() {
@@ -83,7 +83,7 @@ fun GithubApp() {
             }
             composable(Screen.Settings.route) {
                 stateTitle.value = "Settings"
-                SettingScreen(stateTitle.value)
+                PreferenceScreen(stateTitle.value)
             }
         }
     }
