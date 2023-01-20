@@ -44,16 +44,6 @@ fun PreferenceScreen(
     val darkMode by viewModel.getDarkTheme().observeAsState()
     val languageApp by viewModel.getLanguage().observeAsState()
     Log.e("PreferenceScreen","darkmode is $darkMode and language is : $languageApp")
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = titlePage,
-            modifier = Modifier.padding(16.dp)
-        )
-    }
 
     val settingList = listOf(
         Setting(
