@@ -11,4 +11,6 @@
     <string name="subtitle_language">Setup language application</string>
     <string name="title_about">About</string>
     <string name="subtitle_about">Copyright @ 2023 budiliauw87</string>
+    <string name="press_again_exit">Press again to exit</string>
+    <string name="find_by_username">Find by username</string>
 </resources>

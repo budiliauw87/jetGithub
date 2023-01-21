@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -37,65 +36,50 @@ fun SearchBar(
     placeholderText: String = "",
     onSearchTextChanged: (String) -> Unit = {},
     onClearClick: () -> Unit = {},
-    onNavigateBack: () -> Unit = {}
+    onDone: () -> Unit = {}
 ) {
-    var showClearButton by remember { mutableStateOf(false) }
+    var showClearButton by remember { mutableStateOf(true) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val focusRequester = remember { FocusRequester() }
 
-    TopAppBar(
-        title = { Text("") },
-        navigationIcon = {
-            IconButton(onClick = { onNavigateBack() }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    modifier = Modifier,
-                    contentDescription = stringResource(id = R.string.search_back_descreption)
-                )
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        value = searchText,
+        onValueChange = onSearchTextChanged,
+        placeholder = {
+            Text(text = placeholderText, color = Color.LightGray)
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            backgroundColor = Color.Transparent,
+            cursorColor = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+        ),
+        trailingIcon = {
+            AnimatedVisibility(
+                visible = showClearButton,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                IconButton(onClick = { onClearClick() }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(id = R.string.search_clear_descreption),
+                        tint = Color.White
+
+                    )
+                }
+
             }
-        }, actions = {
-
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 2.dp)
-                    .onFocusChanged { focusState ->
-                        showClearButton = (focusState.isFocused)
-                    }
-                    .focusRequester(focusRequester),
-                value = searchText,
-                onValueChange = onSearchTextChanged,
-                placeholder = {
-                    Text(text = placeholderText)
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    backgroundColor = Color.Transparent,
-                    cursorColor = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-                ),
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = showClearButton,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        IconButton(onClick = { onClearClick() }) {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(id = R.string.search_clear_descreption)
-                            )
-                        }
-
-                    }
-                },
-                maxLines = 1,
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {
-                    keyboardController?.hide()
-                }),
-            )
-
-        })
+        },
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = {
+            keyboardController?.hide()
+            onDone()
+        }),
+    )
 }
+
