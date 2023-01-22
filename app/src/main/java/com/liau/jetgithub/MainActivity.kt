@@ -2,9 +2,11 @@ package com.liau.jetgithub
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -18,26 +20,76 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.liau.jetgithub.core.di.ViewModelFactory
+import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.navigation.Screen
+import com.liau.jetgithub.state.UiState
 import com.liau.jetgithub.ui.component.BottomBar
 import com.liau.jetgithub.ui.component.SearchBar
 import com.liau.jetgithub.ui.preference.FavoriteScreen
 import com.liau.jetgithub.ui.preference.HomeScreen
 import com.liau.jetgithub.ui.preference.PreferenceScreen
+import com.liau.jetgithub.ui.preference.PreferenceViewModel
 import com.liau.jetgithub.ui.theme.JetGithubTheme
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<PreferenceViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { false }
+        var uiState: UiState<ConfigApp> by mutableStateOf(UiState.Loading)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState
+                    .onEach {
+                        uiState = it
+                    }
+                    .collect()
+            }
+        }
+
+        splashScreen.setKeepOnScreenCondition {
+            when (uiState) {
+                is UiState.Loading -> {
+                    true
+                }
+                is UiState.Success -> {
+                    false
+                }
+                is UiState.Error -> {
+                    false
+                }
+            }
+        }
+
         setContent {
-            JetGithubTheme {
-                GithubApp()
+            val systemUiController = rememberSystemUiController()
+            if(uiState is UiState.Success){
+                val configApp = (uiState as UiState.Success<ConfigApp>).data
+                val isDarkTheme = configApp.isDarkMode
+                Log.e("Main", "Success ${configApp.language}")
+                // Update the dark content of the system bars to match the theme
+                DisposableEffect(systemUiController, isDarkTheme) {
+                    systemUiController.systemBarsDarkContentEnabled = !isDarkTheme
+                    onDispose {}
+                }
+                JetGithubTheme(darkTheme = isDarkTheme,) {
+                    GithubApp()
+                }
             }
         }
     }
@@ -50,7 +102,7 @@ fun GithubApp() {
     var isSearching by remember { mutableStateOf(false) }
     var querySearch by remember { mutableStateOf("") }
 
-    var context = LocalContext.current as Activity
+    val context = LocalContext.current as Activity
 
     Scaffold(
         topBar = {
@@ -72,9 +124,9 @@ fun GithubApp() {
                                     querySearch = it
                                 },
                                 onClearClick = {
-                                    if(!querySearch.isEmpty()) {
-                                        querySearch =""
-                                    }else{
+                                    if (!querySearch.isEmpty()) {
+                                        querySearch = ""
+                                    } else {
                                         isSearching = isSearching != true
                                     }
 
