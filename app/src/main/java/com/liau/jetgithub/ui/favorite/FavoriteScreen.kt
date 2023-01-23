@@ -1,4 +1,4 @@
-package com.liau.jetgithub.ui.preference
+package com.liau.jetgithub.ui.setting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

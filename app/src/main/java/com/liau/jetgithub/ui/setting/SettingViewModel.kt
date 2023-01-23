@@ -1,4 +1,4 @@
-package com.liau.jetgithub.ui.preference
+package com.liau.jetgithub.ui.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  * Email budiliauw87@gmail.com
  * Github github.com/budiliauw87
  */
-class PreferenceViewModel(private val repository: GitRepository) : ViewModel() {
+class SettingViewModel(private val repository: GitRepository) : ViewModel() {
     val uiState: StateFlow<UiState<ConfigApp>> = repository.getPrefApp().map {
         UiState.Success(it)
     }.stateIn(

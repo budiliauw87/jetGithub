@@ -1,4 +1,4 @@
-package com.liau.jetgithub.ui.preference
+package com.liau.jetgithub.ui.setting
 
 import android.app.Activity
 import android.widget.Toast
@@ -8,8 +8,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.liau.jetgithub.JetGithubApp
 import com.liau.jetgithub.R
+import com.liau.jetgithub.core.model.ConfigApp
+import com.liau.jetgithub.ui.theme.JetGithubTheme
 
 /**
  * Created by Budiman on 18/01/2023.
@@ -44,4 +49,10 @@ fun HomeScreen(titlePage: String) {
             ).show()
         }
     }
+}
+
+@Preview(showBackground = true, device = Devices.PIXEL_4)
+@Composable
+fun DefaultPreview() {
+    HomeScreen("Home")
 }

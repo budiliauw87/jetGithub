@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_home">Beranda</string>
+    <string name="menu_favorite">Favorit</string>
+    <string name="menu_settings">Pengaturan</string>
+    <string name="search_back_descreption">icon kembali</string>
+    <string name="search_clear_descreption">icon hapus pencarian</string>
+    <string name="title_dark_theme">Tema Gelap</string>
+    <string name="subtitle_dark_theme">Pengaturan tema mode gelap</string>
+    <string name="title_language">Bahasa</string>
+    <string name="subtitle_language">Pengaturan Bahasa aplikasi</string>
+    <string name="title_about">Tentang</string>
+    <string name="press_again_exit">Tekan lagi untuk keluar</string>
+    <string name="find_by_username">Cari nama penguna</string>
+    <string name="english">Inggris</string>
+    <string name="indonesian">Indonesia</string>
+</resources>

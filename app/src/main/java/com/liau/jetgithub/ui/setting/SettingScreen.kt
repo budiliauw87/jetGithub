@@ -1,5 +1,6 @@
-package com.liau.jetgithub.ui.preference
+package com.liau.jetgithub.ui.setting
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -21,7 +22,6 @@ import com.liau.jetgithub.R
 import com.liau.jetgithub.core.di.Injector
 import com.liau.jetgithub.core.di.ViewModelFactory
 import com.liau.jetgithub.core.model.ConfigApp
-import com.liau.jetgithub.ui.component.DialogPref
 
 /**
  * Created by Budiman on 19/01/2023.
@@ -29,20 +29,26 @@ import com.liau.jetgithub.ui.component.DialogPref
  * Github github.com/budiliauw87
  */
 @Composable
-fun PreferenceScreen(
+fun SettingScreen(
     configApp: ConfigApp,
-    viewModel: PreferenceViewModel = viewModel(
+    viewModel: SettingViewModel = viewModel(
         factory = ViewModelFactory(Injector.provideRepository(LocalContext.current))
     )
 ) {
     var showDialogLanguage by remember { mutableStateOf(false) }
     var isDarkMode by remember { mutableStateOf(configApp.isDarkMode) }
+    val languageValue by remember { mutableStateOf(configApp.language) }
     val titleDialogLanguage = stringResource(id = R.string.title_language)
     if (showDialogLanguage) {
-        DialogPref(
+        DialogLanguage(
             titleDialog = titleDialogLanguage,
             showDialog = showDialogLanguage,
-            onDismiss = { showDialogLanguage = false }
+            onDismiss = { showDialogLanguage = false },
+            onValueChange = {
+                viewModel.saveLanguage(it)
+                showDialogLanguage = false
+            },
+            settingValue = languageValue
         )
     }
     Column(
@@ -164,6 +170,6 @@ fun PreferenceScreen(
 
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 @Composable
-fun DefaultPreview() {
-    PreferenceScreen(ConfigApp("en", true))
+fun SettingPreview() {
+    SettingScreen(ConfigApp("en", true))
 }

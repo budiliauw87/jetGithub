@@ -1,47 +1,35 @@
 package com.liau.jetgithub
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.liau.jetgithub.core.di.ViewModelFactory
 import com.liau.jetgithub.core.model.ConfigApp
-import com.liau.jetgithub.navigation.Screen
 import com.liau.jetgithub.state.UiState
-import com.liau.jetgithub.ui.component.BottomBar
-import com.liau.jetgithub.ui.component.SearchBar
-import com.liau.jetgithub.ui.preference.FavoriteScreen
-import com.liau.jetgithub.ui.preference.HomeScreen
-import com.liau.jetgithub.ui.preference.PreferenceScreen
-import com.liau.jetgithub.ui.preference.PreferenceViewModel
+import com.liau.jetgithub.ui.setting.SettingViewModel
 import com.liau.jetgithub.ui.theme.JetGithubTheme
 import com.liau.jetgithub.ui.theme.Purple700
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<PreferenceViewModel> {
+    private val viewModel by viewModels<SettingViewModel> {
         ViewModelFactory.getInstance(this)
     }
 
@@ -73,9 +61,11 @@ class MainActivity : ComponentActivity() {
             if (uiState is UiState.Success) {
                 val configApp = (uiState as UiState.Success<ConfigApp>).data
                 val isDarkTheme = configApp.isDarkMode
-                var colorStatus = if(isDarkTheme){
-                     Color.Black
-                }else {
+                val languageApp = configApp.language
+                updateResources(LocalContext.current, languageApp)
+                var colorStatus = if (isDarkTheme) {
+                    Color.Black
+                } else {
                     Purple700
                 }
                 systemUiController.setSystemBarsColor(
@@ -87,91 +77,21 @@ class MainActivity : ComponentActivity() {
                     onDispose {}
                 }
                 JetGithubTheme(darkTheme = isDarkTheme) {
-                    GithubApp(configApp)
+                    JetGithubApp(configApp)
                 }
             }
         }
     }
-}
 
-@Composable
-fun GithubApp(configApp: ConfigApp) {
-    val navController: NavHostController = rememberNavController()
-    var stateTitle by remember { mutableStateOf("Home") }
-    var querySearch by remember { mutableStateOf("") }
-    var isSearching by remember { mutableStateOf(false) }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stateTitle,
-                        color = Color.White,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                actions = {
-                    if (isSearching && stateTitle == "Home") {
-                        SearchBar(
-                            searchText = querySearch,
-                            placeholderText = stringResource(R.string.find_by_username),
-                            onSearchTextChanged = {
-                                querySearch = it
-                            },
-                            onClearClick = {
-                                if (querySearch.isNotEmpty()) {
-                                    querySearch = ""
-                                } else {
-                                    isSearching = isSearching != true
-                                }
-
-                            },
-                            onDone = {
-                                //Toast.makeText(context, querySearch, Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    } else if(!isSearching && stateTitle == "Home") {
-                        IconButton(onClick = {
-                            isSearching = isSearching != true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Open Options"
-                            )
-                        }
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomBar(navController = navController)
-        }
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route,
-            modifier = Modifier.padding(it)
-        ) {
-            composable(Screen.Home.route) {
-                stateTitle = stringResource(R.string.menu_home)
-                HomeScreen(stateTitle)
-            }
-            composable(Screen.Favorite.route) {
-                stateTitle = stringResource(R.string.menu_favorite)
-                FavoriteScreen(stateTitle)
-            }
-            composable(Screen.Settings.route) {
-                stateTitle = stringResource(R.string.menu_settings)
-                PreferenceScreen(configApp)
-            }
+    private fun updateResources(context: Context, language: String) {
+        context.resources.apply {
+            val locale = Locale(language)
+            val config = Configuration(configuration)
+            context.createConfigurationContext(configuration)
+            Locale.setDefault(locale)
+            config.setLocale(locale)
+            context.resources.updateConfiguration(config, displayMetrics)
         }
     }
 }
 
-@Preview(showBackground = true, device = Devices.PIXEL_4)
-@Composable
-fun DefaultPreview() {
-    JetGithubTheme {
-        GithubApp(ConfigApp("id",false))
-    }
-}

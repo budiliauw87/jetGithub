@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.data.local.AppPreferences
 import com.liau.jetgithub.core.data.network.ApiConfig
-import com.liau.jetgithub.ui.preference.PreferenceViewModel
+import com.liau.jetgithub.ui.setting.SettingViewModel
 
 /**
  * Created by Budiman on 19/01/2023.
@@ -22,8 +22,8 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 class ViewModelFactory(private val repo: GitRepository) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(PreferenceViewModel::class.java)) {
-            return PreferenceViewModel(repo) as T
+        if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
+            return SettingViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
