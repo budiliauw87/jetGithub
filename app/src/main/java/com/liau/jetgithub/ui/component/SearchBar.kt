@@ -29,13 +29,13 @@ import com.liau.jetgithub.R
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
-    searchText: String,
+    searchText: String ="",
     placeholderText: String = "",
     onSearchTextChanged: (String) -> Unit = {},
     onClearClick: () -> Unit = {},
     onDone: () -> Unit = {}
 ) {
-    var showClearButton by remember { mutableStateOf(true) }
+    val showClearButton by remember { mutableStateOf(true) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
@@ -79,4 +79,3 @@ fun SearchBar(
         }),
     )
 }
-

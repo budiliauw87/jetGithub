@@ -1,14 +1,15 @@
 package com.liau.jetgithub.ui.preference
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.state.UiState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.lang.Thread.sleep
 
 /**
  * Created by Budiman on 19/01/2023.
@@ -24,4 +25,15 @@ class PreferenceViewModel(private val repository: GitRepository) : ViewModel() {
         started = SharingStarted.WhileSubscribed(5_000)
     )
 
+    fun saveLanguage(selectedLanguage: String) {
+        viewModelScope.launch {
+            repository.saveLanguage(selectedLanguage)
+        }
+    }
+
+    fun saveDarkMode(newValue: Boolean) {
+        viewModelScope.launch {
+            repository.saveDarkTheme(newValue)
+        }
+    }
 }

@@ -1,9 +1,6 @@
 package com.liau.jetgithub
 
-import android.app.Activity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -15,7 +12,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +35,7 @@ import com.liau.jetgithub.ui.preference.HomeScreen
 import com.liau.jetgithub.ui.preference.PreferenceScreen
 import com.liau.jetgithub.ui.preference.PreferenceViewModel
 import com.liau.jetgithub.ui.theme.JetGithubTheme
+import com.liau.jetgithub.ui.theme.Purple700
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -54,14 +51,9 @@ class MainActivity : ComponentActivity() {
         var uiState: UiState<ConfigApp> by mutableStateOf(UiState.Loading)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState
-                    .onEach {
-                        uiState = it
-                    }
-                    .collect()
+                viewModel.uiState.onEach { uiState = it }.collect()
             }
         }
-
         splashScreen.setKeepOnScreenCondition {
             when (uiState) {
                 is UiState.Loading -> {
@@ -78,17 +70,24 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val systemUiController = rememberSystemUiController()
-            if(uiState is UiState.Success){
+            if (uiState is UiState.Success) {
                 val configApp = (uiState as UiState.Success<ConfigApp>).data
                 val isDarkTheme = configApp.isDarkMode
-                Log.e("Main", "Success ${configApp.language}")
+                var colorStatus = if(isDarkTheme){
+                     Color.Black
+                }else {
+                    Purple700
+                }
+                systemUiController.setSystemBarsColor(
+                    color = colorStatus
+                )
                 // Update the dark content of the system bars to match the theme
                 DisposableEffect(systemUiController, isDarkTheme) {
-                    systemUiController.systemBarsDarkContentEnabled = !isDarkTheme
+                    systemUiController.systemBarsDarkContentEnabled = false
                     onDispose {}
                 }
-                JetGithubTheme(darkTheme = isDarkTheme,) {
-                    GithubApp()
+                JetGithubTheme(darkTheme = isDarkTheme) {
+                    GithubApp(configApp)
                 }
             }
         }
@@ -96,14 +95,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GithubApp() {
+fun GithubApp(configApp: ConfigApp) {
     val navController: NavHostController = rememberNavController()
     var stateTitle by remember { mutableStateOf("Home") }
-    var isSearching by remember { mutableStateOf(false) }
     var querySearch by remember { mutableStateOf("") }
-
-    val context = LocalContext.current as Activity
-
+    var isSearching by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -115,37 +111,34 @@ fun GithubApp() {
                     )
                 },
                 actions = {
-                    if (stateTitle == "Home") {
-                        if (isSearching) {
-                            SearchBar(
-                                searchText = querySearch,
-                                placeholderText = stringResource(R.string.find_by_username),
-                                onSearchTextChanged = {
-                                    querySearch = it
-                                },
-                                onClearClick = {
-                                    if (!querySearch.isEmpty()) {
-                                        querySearch = ""
-                                    } else {
-                                        isSearching = isSearching != true
-                                    }
-
-                                },
-                                onDone = {
-                                    Toast.makeText(context, querySearch, Toast.LENGTH_SHORT).show()
+                    if (isSearching && stateTitle == "Home") {
+                        SearchBar(
+                            searchText = querySearch,
+                            placeholderText = stringResource(R.string.find_by_username),
+                            onSearchTextChanged = {
+                                querySearch = it
+                            },
+                            onClearClick = {
+                                if (querySearch.isNotEmpty()) {
+                                    querySearch = ""
+                                } else {
+                                    isSearching = isSearching != true
                                 }
-                            )
-                        } else {
-                            IconButton(onClick = {
-                                isSearching = isSearching != true
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Open Options"
-                                )
-                            }
-                        }
 
+                            },
+                            onDone = {
+                                //Toast.makeText(context, querySearch, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    } else if(!isSearching && stateTitle == "Home") {
+                        IconButton(onClick = {
+                            isSearching = isSearching != true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Open Options"
+                            )
+                        }
                     }
                 }
             )
@@ -169,7 +162,7 @@ fun GithubApp() {
             }
             composable(Screen.Settings.route) {
                 stateTitle = stringResource(R.string.menu_settings)
-                PreferenceScreen(stateTitle)
+                PreferenceScreen(configApp)
             }
         }
     }
@@ -179,6 +172,6 @@ fun GithubApp() {
 @Composable
 fun DefaultPreview() {
     JetGithubTheme {
-        GithubApp()
+        GithubApp(ConfigApp("id",false))
     }
 }

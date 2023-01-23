@@ -7,8 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.liau.jetgithub.core.model.Setting
 
@@ -25,7 +28,7 @@ fun SettingItem(
     val titleSetting = remember { mutableStateOf(item.title) }
     if (showDialog.value) {
         DialogPref(
-            msg = titleSetting.value,
+            titleDialog = titleSetting.value,
             showDialog = showDialog.value,
             onDismiss = { showDialog.value = false }
         )
@@ -67,25 +70,54 @@ fun SettingItem(
 
 @Composable
 fun DialogPref(
-    msg: String,
+    titleDialog: String,
     showDialog: Boolean,
     onDismiss: () -> Unit,
 ) {
+
     if (showDialog) {
         AlertDialog(
-            title = {
-                Text(
-                    text = msg,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.fillMaxWidth(1f).padding(8.dp)
-                )
-            },
             text = {
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)) {
+                    .wrapContentHeight()
+                ) {
+                    Text(
+                        text = titleDialog,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h6,
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.fillMaxWidth(1f).padding(vertical = 16.dp)
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = true,
+                            onClick = { },
+                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary)
+                        )
+                        Text(
+                            text = "Tester",
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = false,
+                            onClick = { },
+                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary)
+                        )
+                        Text(
+                            text = "Tester",
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
                 }
             },
             onDismissRequest = onDismiss,
@@ -93,5 +125,15 @@ fun DialogPref(
             dismissButton = {},
         )
     }
-
 }
+
+@Preview(showBackground = true, device = Devices.PIXEL_4)
+@Composable
+fun DialogPreview() {
+    DialogPref(
+        "preview",
+        true,
+        onDismiss ={}
+    )
+}
+

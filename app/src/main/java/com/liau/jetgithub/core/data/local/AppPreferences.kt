@@ -34,10 +34,16 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
 
 
     //save pref
-    suspend fun savePref(key: String, newValue: String) {
-        val PREF_KEY = stringPreferencesKey(key)
+    suspend fun saveLanguage(newValue: String) {
         dataStore.edit {
-            it[PREF_KEY] = newValue
+            it[LANGUAGE_KEY] = newValue
+        }
+    }
+
+
+    suspend fun saveDarkTheme(newValue: Boolean) {
+        dataStore.edit {
+            it[DARKMODE_KEY] = newValue
         }
     }
 
