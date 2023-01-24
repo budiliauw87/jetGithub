@@ -11,16 +11,12 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.liau.jetgithub.MainViewModel
 import com.liau.jetgithub.R
-import com.liau.jetgithub.core.di.Injector
-import com.liau.jetgithub.core.di.ViewModelFactory
 import com.liau.jetgithub.state.UiState
 import com.liau.jetgithub.ui.error.ErrorContent
-import com.liau.jetgithub.ui.home.HomeViewModel
 
 /**
  * Created by Budiman on 18/01/2023.
@@ -30,12 +26,10 @@ import com.liau.jetgithub.ui.home.HomeViewModel
 @Suppress("FunctionName")
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(
-        factory = ViewModelFactory(Injector.provideRepository(LocalContext.current))
-    )
+    viewModel: MainViewModel,
+    onBackPressed: () -> Unit,
 ) {
-    val context = (LocalContext.current) as Activity
-    val lastBackPressed: MutableState<Long> = remember { mutableStateOf(0) }
+
     viewModel.uiStateUser.collectAsState().value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
@@ -43,41 +37,29 @@ fun HomeScreen(
                     text = "Loading",
                     modifier = Modifier.padding(16.dp)
                 )
-                Log.e("HomeScreen", "Loading")
                 viewModel.getUser()
             }
             is UiState.Success -> {
                 val totalNodes = uiState.data.data?.search?.edges?.size
                 Log.e("HomeScreen", "Success total nodes is: {$totalNodes}")
                 ErrorContent(
-                    titleError = "Ops error",
+                    titleError = stringResource(R.string.something_error),
                     iconError = Icons.Default.ErrorOutline,
                     onRefresh = { viewModel.getUser() }
-                    )
+                )
+
             }
             is UiState.Error -> {
-                Log.e("HomeScreen", "Error")
+                ErrorContent(
+                    titleError = stringResource(R.string.something_error),
+                    iconError = Icons.Default.ErrorOutline,
+                    onRefresh = { viewModel.getUser() }
+                )
             }
         }
     }
 
     BackHandler {
-        val currentTimes = System.currentTimeMillis()
-        if (lastBackPressed.value + 1000 > currentTimes) {
-            context.finish()
-        } else {
-            lastBackPressed.value = currentTimes
-            Toast.makeText(
-                context,
-                context.getString(R.string.press_again_exit),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        onBackPressed()
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_4)
-@Composable
-fun DefaultPreview() {
-    HomeScreen()
 }

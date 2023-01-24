@@ -17,7 +17,7 @@ class GitRepository(
     private val apiService: ApiService,
     private val pref: AppPreferences
 ) {
-    val token = "Bearer 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"
+    val token = "Bearer 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"
     fun getPrefApp(): Flow<ConfigApp> {
         return pref.getPrefData()
     }

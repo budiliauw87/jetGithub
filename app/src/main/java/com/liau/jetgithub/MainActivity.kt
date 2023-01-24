@@ -20,7 +20,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.liau.jetgithub.core.di.ViewModelFactory
 import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.state.UiState
-import com.liau.jetgithub.ui.setting.SettingViewModel
 import com.liau.jetgithub.ui.theme.JetGithubTheme
 import com.liau.jetgithub.ui.theme.Purple700
 import kotlinx.coroutines.flow.collect
@@ -29,7 +28,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<SettingViewModel> {
+    private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
     }
 
@@ -77,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     onDispose {}
                 }
                 JetGithubTheme(darkTheme = isDarkTheme) {
-                    JetGithubApp(configApp)
+                    JetGithubApp(viewModel, configApp)
                 }
             }
         }

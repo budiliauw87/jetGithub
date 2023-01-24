@@ -15,4 +15,5 @@
     <string name="find_by_username">Find by username</string>
     <string name="english">English</string>
     <string name="indonesian">Indonesian</string>
+    <string name="something_error">Something Error</string>
 </resources>

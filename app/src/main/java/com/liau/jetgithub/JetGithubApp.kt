@@ -1,5 +1,7 @@
 package com.liau.jetgithub
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -8,6 +10,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,11 +32,13 @@ import com.liau.jetgithub.ui.setting.SettingScreen
  */
 
 @Composable
-fun JetGithubApp(configApp: ConfigApp) {
+fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
     val navController: NavHostController = rememberNavController()
     var stateTitle by remember { mutableStateOf("Home") }
     var querySearch by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
+    val context = (LocalContext.current) as Activity
+    var lastBackPressed: Long by remember { mutableStateOf(0) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -45,7 +50,7 @@ fun JetGithubApp(configApp: ConfigApp) {
                     )
                 },
                 actions = {
-                    if (stateTitle == "Home") {
+                    if (stateTitle == stringResource(R.string.menu_home)) {
                         if (isSearching) {
                             SearchBar(
                                 searchText = querySearch,
@@ -90,15 +95,35 @@ fun JetGithubApp(configApp: ConfigApp) {
         ) {
             composable(Screen.Home.route) {
                 stateTitle = stringResource(R.string.menu_home)
-                HomeScreen()
+                HomeScreen(
+                    viewModel,
+                    onBackPressed = {
+                        if (isSearching) {
+                            isSearching = false
+                        } else {
+                            val currentTimes = System.currentTimeMillis()
+                            if (lastBackPressed + 1000 > currentTimes) {
+                                context.finish()
+                            } else {
+                                lastBackPressed = currentTimes
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.press_again_exit),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
+                        }
+                    },
+                )
             }
             composable(Screen.Favorite.route) {
                 stateTitle = stringResource(R.string.menu_favorite)
-                FavoriteScreen(stateTitle)
+                FavoriteScreen(viewModel)
             }
             composable(Screen.Settings.route) {
                 stateTitle = stringResource(R.string.menu_settings)
-                SettingScreen(configApp)
+                SettingScreen(viewModel, configApp)
             }
         }
     }

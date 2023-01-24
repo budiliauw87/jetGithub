@@ -6,9 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.liau.jetgithub.MainViewModel
 
 /**
  * Created by Budiman on 19/01/2023.
@@ -16,18 +15,15 @@ import androidx.compose.ui.unit.dp
  * Github github.com/budiliauw87
  */
 @Composable
-fun FavoriteScreen(titlePage: String) {
+fun FavoriteScreen(
+    viewModel: MainViewModel,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
         Text(
-            text = titlePage,
+            text = "Favorite",
             modifier = Modifier.padding(16.dp)
         )
     }
-}
-@Preview(showBackground = true, device = Devices.PIXEL_4)
-@Composable
-fun FavoriteScreenPreview() {
-    FavoriteScreen("Favorite")
 }

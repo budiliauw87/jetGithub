@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +11,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.liau.jetgithub.ui.setting.HomeScreen
 
 /**
  * Created by Budiman on 24/01/2023.
@@ -45,11 +43,11 @@ fun ErrorContent(
         )
         Button(
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.secondary
+                backgroundColor = MaterialTheme.colors.primary
             ),
             onClick = onRefresh,
         ) {
-            Text(text = "Refresh")
+            Text(text = "Refresh", color = MaterialTheme.colors.background)
         }
     }
 }
