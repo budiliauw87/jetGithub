@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.data.local.AppPreferences
 import com.liau.jetgithub.core.data.network.ApiConfig
+import com.liau.jetgithub.ui.home.HomeViewModel
 import com.liau.jetgithub.ui.setting.SettingViewModel
 
 /**
@@ -24,6 +25,8 @@ class ViewModelFactory(private val repo: GitRepository) : ViewModelProvider.NewI
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
             return SettingViewModel(repo) as T
+        } else if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

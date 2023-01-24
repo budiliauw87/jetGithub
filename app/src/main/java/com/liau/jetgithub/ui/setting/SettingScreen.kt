@@ -37,7 +37,7 @@ fun SettingScreen(
 ) {
     var showDialogLanguage by remember { mutableStateOf(false) }
     var isDarkMode by remember { mutableStateOf(configApp.isDarkMode) }
-    val languageValue by remember { mutableStateOf(configApp.language) }
+    var languageValue by remember { mutableStateOf(configApp.language) }
     val titleDialogLanguage = stringResource(id = R.string.title_language)
     if (showDialogLanguage) {
         DialogLanguage(
@@ -45,6 +45,7 @@ fun SettingScreen(
             showDialog = showDialogLanguage,
             onDismiss = { showDialogLanguage = false },
             onValueChange = {
+                languageValue = it
                 viewModel.saveLanguage(it)
                 showDialogLanguage = false
             },

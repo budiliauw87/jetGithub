@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * Github github.com/budiliauw87
  */
 object ApiConfig {
-    private const val BASE_URL = "https://story-api.dicoding.dev/v1/"
+    private const val BASE_URL = "https://api.github.com/"
     private fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

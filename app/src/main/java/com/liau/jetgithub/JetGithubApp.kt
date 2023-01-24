@@ -90,7 +90,7 @@ fun JetGithubApp(configApp: ConfigApp) {
         ) {
             composable(Screen.Home.route) {
                 stateTitle = stringResource(R.string.menu_home)
-                HomeScreen(stateTitle)
+                HomeScreen()
             }
             composable(Screen.Favorite.route) {
                 stateTitle = stringResource(R.string.menu_favorite)
