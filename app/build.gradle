@@ -14,7 +14,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "TOKEN", '"Bearer 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"'
+        buildConfigField "String", "TOKEN", '"Bearer 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"'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -60,9 +60,8 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-rxjava2:$compose_ui_version"
 
 
-
-
     //Other library
+    implementation "io.coil-kt:coil-compose:$coil_compose_version"
     implementation "androidx.compose.material:material-icons-extended:1.4.0-alpha04"
     implementation "androidx.core:core-splashscreen:$core_splashscreen_version"
     implementation 'com.google.accompanist:accompanist-swiperefresh:0.28.0'

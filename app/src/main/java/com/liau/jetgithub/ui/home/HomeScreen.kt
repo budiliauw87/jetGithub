@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -30,7 +31,7 @@ fun HomeScreen(
     viewModel: MainViewModel,
     onBackPressed: () -> Unit,
 ) {
-
+    var listState = rememberLazyListState()
     viewModel.uiStateUser.collectAsState().value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
@@ -43,13 +44,16 @@ fun HomeScreen(
             is UiState.Success -> {
                 uiState.data.data?.search?.edges?.let { listEdges ->
                     LazyColumn(
-                        Modifier.fillMaxSize()
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
                             .background(color = BlueGrey50)
                     ) {
                         items(
                             items = listEdges,
-                        ) {
-                            UserItem()
+                            key = {item -> item.hashCode() }
+                        ){
+                            UserItem(it?.node)
                         }
                     }
                 }

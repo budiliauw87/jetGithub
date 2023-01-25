@@ -75,7 +75,7 @@ data class Search(
 	val userCount: Int? = null,
 
 	@field:SerializedName("edges")
-	val edges: List<EdgesItem?>? = null
+	val edges: List<EdgesItem>
 ) : Parcelable
 
 @Parcelize

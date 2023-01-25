@@ -12,7 +12,6 @@ import retrofit2.http.POST
  * Github github.com/budiliauw87
  */
 interface ApiService {
-
     @POST("graphql")
     suspend fun getUsers(
         @Header("Authorization") token: String,

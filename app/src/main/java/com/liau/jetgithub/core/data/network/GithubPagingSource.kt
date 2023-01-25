@@ -2,7 +2,9 @@ package com.liau.jetgithub.core.data.network
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.liau.jetgithub.core.data.network.response.Response
+import com.liau.jetgithub.BuildConfig
+import com.liau.jetgithub.core.data.network.request.RequestGithub
+import com.liau.jetgithub.core.data.network.response.EdgesItem
 
 /**
  * Created by Budiman on 24/01/2023.
@@ -11,25 +13,56 @@ import com.liau.jetgithub.core.data.network.response.Response
  */
 class GithubPagingSource(
     private val apiService: ApiService,
-) : PagingSource<Int, Response>() {
-    override fun getRefreshKey(state: PagingState<Int, Response>): Int =
-        ((state.anchorPosition ?: 0) - state.config.initialLoadSize / 2).coerceAtLeast(0)
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Response> {
+) : PagingSource<String, EdgesItem>() {
+    val token = BuildConfig.TOKEN
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, EdgesItem> {
         return try {
-            val position = params.key ?: 1
-            val token = "Bearer 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"
-            LoadResult.Error(Exception("Error"))
-            /*
-            val response = apiService.getUsers(token)
+            val cursor = params.key ?: ""
+            val queryGit = getQueryGraph("", cursor, 0)
+            val response = apiService.getUsers(token, RequestGithub(queryGit))
+            val list = response.data?.search?.edges ?: listOf<EdgesItem>()
+            val nextCursor: String? = list.last().cursor
             LoadResult.Page(
-                data = response.listStory,
-                prevKey = if (position == 1) null else position - 1,
-                nextKey = if (response.listStory.isEmpty()) null else position + 1
-            )*/
+                data = list,
+                prevKey = params.key,
+                nextKey = nextCursor
+            )
+            LoadResult.Error(Exception("Error"))
         } catch (e: Exception) {
             return LoadResult.Error(e)
         }
     }
 
+    override fun getRefreshKey(state: PagingState<String, EdgesItem>): String? {
+        return null
+    }
+
+    fun getQueryGraph(query: String, lastCursor: String, method: Int): String {
+        val resultQueryGraph: String
+        val querySearch: String
+        val cursorAfter: String
+        when (method) {
+            0 -> {
+                querySearch = if (query.isEmpty()) "language:java" else query
+                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
+                resultQueryGraph =
+                    "query { search( query: \"" + querySearch + "\", type: USER, first:10" + cursorAfter +
+                            ") {userCount edges { node { ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories { totalCount }}}cursor}}}"
+            }
+            1 -> {
+                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
+                resultQueryGraph =
+                    "query { user( login: \"" + query + "\" ) { followers( first:10" + cursorAfter +
+                            " ) { edges{ node{ ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories{ totalCount }}} cursor}}}}"
+            }
+            2 -> {
+                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
+                resultQueryGraph =
+                    "query { user( login: \"" + query + "\" ) { following( first:10" + cursorAfter +
+                            " ) { edges{ node{ ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories{ totalCount }}} cursor}}}}"
+            }
+            else -> resultQueryGraph = ""
+        }
+        return resultQueryGraph
+    }
 }
