@@ -1,5 +1,6 @@
 package com.liau.jetgithub.core.data
 
+import com.liau.jetgithub.BuildConfig
 import com.liau.jetgithub.core.data.local.AppPreferences
 import com.liau.jetgithub.core.data.network.ApiService
 import com.liau.jetgithub.core.data.network.request.RequestGithub
@@ -17,7 +18,7 @@ class GitRepository(
     private val apiService: ApiService,
     private val pref: AppPreferences
 ) {
-    val token = "Bearer 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"
+    val token = BuildConfig.TOKEN
     fun getPrefApp(): Flow<ConfigApp> {
         return pref.getPrefData()
     }
