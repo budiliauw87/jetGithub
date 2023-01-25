@@ -36,6 +36,9 @@ class MainViewModel(private val repository: GitRepository) : ViewModel() {
             repository.saveLanguage(selectedLanguage)
         }
     }
+    fun setLoadingUiState(){
+        _uiStateUser.value = UiState.Loading
+    }
 
     fun saveDarkMode(newValue: Boolean) {
         viewModelScope.launch {
@@ -43,7 +46,7 @@ class MainViewModel(private val repository: GitRepository) : ViewModel() {
         }
     }
 
-
+    
     fun getUser() {
         viewModelScope.launch {
             _uiStateUser.value = UiState.Loading

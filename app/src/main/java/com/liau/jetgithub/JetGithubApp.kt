@@ -20,8 +20,8 @@ import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.navigation.Screen
 import com.liau.jetgithub.ui.component.BottomBar
 import com.liau.jetgithub.ui.component.SearchBar
+import com.liau.jetgithub.ui.home.HomeScreen
 import com.liau.jetgithub.ui.setting.FavoriteScreen
-import com.liau.jetgithub.ui.setting.HomeScreen
 import com.liau.jetgithub.ui.setting.SettingScreen
 
 

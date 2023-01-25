@@ -27,7 +27,6 @@ class GithubPagingSource(
                 prevKey = params.key,
                 nextKey = nextCursor
             )
-            LoadResult.Error(Exception("Error"))
         } catch (e: Exception) {
             return LoadResult.Error(e)
         }

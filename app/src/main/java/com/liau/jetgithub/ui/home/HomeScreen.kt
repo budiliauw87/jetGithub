@@ -1,22 +1,30 @@
-package com.liau.jetgithub.ui.setting
+package com.liau.jetgithub.ui.home
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
-import androidx.paging.compose.items
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import com.liau.jetgithub.MainViewModel
+import com.liau.jetgithub.R
+import com.liau.jetgithub.ui.component.ErrorLoadItem
 import com.liau.jetgithub.ui.component.UserItem
+import com.liau.jetgithub.ui.error.ErrorContent
+import com.liau.jetgithub.ui.theme.BlueGrey50
 
 /**
  * Created by Budiman on 18/01/2023.
@@ -31,45 +39,63 @@ fun HomeScreen(
     onBackPressed: () -> Unit,
 ) {
     val lazyPagingItems = viewModel.userPaging.collectAsLazyPagingItems()
-    var listState = rememberLazyListState()
+    val listState = rememberLazyListState()
     val refreshing = lazyPagingItems.loadState.refresh is LoadState.Loading
-    val pullRefreshState = rememberPullRefreshState(refreshing, { lazyPagingItems.refresh() })
-    Box(Modifier.pullRefresh(pullRefreshState)) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(
-                items = lazyPagingItems,
-                key = { item -> item.hashCode() }
-            ) { item ->
-                item?.let {
-                    UserItem(it.node)
+    val isErrorRefresh = lazyPagingItems.loadState.refresh is LoadState.Error
+    val pullRefreshState = rememberPullRefreshState(refreshing, {
+        lazyPagingItems.refresh()
+    })
+    Box(
+        modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize()
+    ) {
+        if (!refreshing) {
+            if (isErrorRefresh) {
+                ErrorContent(
+                    titleError = stringResource(R.string.something_error),
+                    iconError = Icons.Default.ErrorOutline,
+                    onRefresh = { lazyPagingItems.refresh() }
+                )
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                        .background(color = BlueGrey50)
+                ) {
+
+                    itemsIndexed(lazyPagingItems) { _, item ->
+                        if (item != null) {
+                            UserItem(item.node)
+                        }
+                    }
+
+                    lazyPagingItems.apply {
+                        when (loadState.append) {
+                            is LoadState.Loading -> { //loading when loadmore
+                                item {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.fillMaxWidth()
+                                            .padding(vertical = 16.dp)
+                                            .wrapContentWidth(Alignment.CenterHorizontally)
+                                    )
+                                }
+                            }
+                            is LoadState.Error -> { //error when load more
+                                item {
+                                    ErrorLoadItem(
+                                        errorText = stringResource(R.string.load_failed),
+                                        onClickRefresh = { lazyPagingItems.retry() }
+                                    )
+                                }
+                            }
+                            else -> {}
+                        }
+                    }
                 }
             }
-
-            lazyPagingItems.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        Log.e("HomeScreen", "State refresh")
-                    }
-                    loadState.append is LoadState.Loading -> { //loading when loadmore
-                        Log.e("HomeScreen", "loading item bottom")
-                    }
-                    loadState.refresh is LoadState.Error -> { // error when refresh
-                        val e = lazyPagingItems.loadState.refresh as LoadState.Error
-                        Log.e("HomeScreen refresh error", e.error.localizedMessage!!)
-                    }
-                    loadState.append is LoadState.Error -> { //error when load more
-                        val e = lazyPagingItems.loadState.append as LoadState.Error
-                        Log.e("HomeScreen append Error : ", e.error.localizedMessage!!)
-                    }
-                }
-            }
-
         }
         PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
+
     BackHandler {
         onBackPressed()
     }

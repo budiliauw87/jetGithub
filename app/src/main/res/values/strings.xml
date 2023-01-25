@@ -18,4 +18,5 @@
     <string name="something_error">Something Error</string>
     <string name="thumbnail_avatar">Avatar thumbnail</string>
     <string name="null_string">Null</string>
+    <string name="load_failed">Load Failed</string>
 </resources>
