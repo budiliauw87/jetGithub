@@ -2,6 +2,7 @@ package com.liau.jetgithub
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.data.network.response.Response
 import com.liau.jetgithub.core.model.ConfigApp
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
  * Budiliauw87@gmail.com
  */
 class MainViewModel(private val repository: GitRepository) : ViewModel() {
-
+    val userPaging = repository.getUserPaging().cachedIn(viewModelScope)
     private val _uiStateUser: MutableStateFlow<UiState<Response>> =
         MutableStateFlow(UiState.Loading)
     val uiStateUser: StateFlow<UiState<Response>>

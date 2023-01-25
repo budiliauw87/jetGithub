@@ -1,9 +1,14 @@
 package com.liau.jetgithub.core.data
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.liau.jetgithub.BuildConfig
 import com.liau.jetgithub.core.data.local.AppPreferences
 import com.liau.jetgithub.core.data.network.ApiService
+import com.liau.jetgithub.core.data.network.GithubPagingSource
 import com.liau.jetgithub.core.data.network.request.RequestGithub
+import com.liau.jetgithub.core.data.network.response.EdgesItem
 import com.liau.jetgithub.core.data.network.response.Response
 import com.liau.jetgithub.core.model.ConfigApp
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +26,17 @@ class GitRepository(
     val token = BuildConfig.TOKEN
     fun getPrefApp(): Flow<ConfigApp> {
         return pref.getPrefData()
+    }
+
+    fun getUserPaging(): Flow<PagingData<EdgesItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10
+            ),
+            pagingSourceFactory = {
+                GithubPagingSource(apiService)
+            }
+        ).flow
     }
 
     suspend fun saveLanguage(selectedLanguage: String) {
