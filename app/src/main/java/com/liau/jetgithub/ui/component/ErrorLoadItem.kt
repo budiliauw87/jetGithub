@@ -17,12 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.liau.jetgithub.R
 
-
 /**
- * Created by Budiliauw87 on 2023-01-25.
- * budiliauw87.github.io
- * Budiliauw87@gmail.com
+ * Created by Budiman on 26/01/2023.
+ * Email budiliauw87@gmail.com
+ * Github github.com/budiliauw87
  */
+
 @Composable
 fun ErrorLoadItem(
     errorText: String,
@@ -44,7 +44,7 @@ fun ErrorLoadItem(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.primary
             ),
-            onClick = { onClickRefresh },
+            onClick = onClickRefresh
         ) {
             Text(
                 text = "Refresh",

@@ -19,4 +19,5 @@
     <string name="thumbnail_avatar">Avatar thumbnail</string>
     <string name="null_string">Null</string>
     <string name="load_failed">Load Failed</string>
+    <string name="detail_user">Detail User</string>
 </resources>

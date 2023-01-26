@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.liau.jetgithub.core.data.GitRepository
-import com.liau.jetgithub.core.data.network.response.Response
+import com.liau.jetgithub.core.data.network.response.Node
 import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.state.UiState
 import kotlinx.coroutines.flow.*
@@ -17,11 +17,8 @@ import kotlinx.coroutines.launch
  * Budiliauw87@gmail.com
  */
 class MainViewModel(private val repository: GitRepository) : ViewModel() {
-    val userPaging = repository.getUserPaging().cachedIn(viewModelScope)
-    private val _uiStateUser: MutableStateFlow<UiState<Response>> =
-        MutableStateFlow(UiState.Loading)
-    val uiStateUser: StateFlow<UiState<Response>>
-        get() = _uiStateUser
+    val querySearchFlow: MutableStateFlow<String> = repository.querySearchFlow
+    val userPaging = repository.items.cachedIn(viewModelScope)
 
     val uiState: StateFlow<UiState<ConfigApp>> = repository.getPrefApp().map {
         UiState.Success(it)
@@ -31,30 +28,19 @@ class MainViewModel(private val repository: GitRepository) : ViewModel() {
         started = SharingStarted.WhileSubscribed(5_000)
     )
 
+    private val _uiStateUser: MutableStateFlow<UiState<Node>> = MutableStateFlow(UiState.Loading)
+    val uiStateUser: StateFlow<UiState<Node>>
+        get() = _uiStateUser
+
     fun saveLanguage(selectedLanguage: String) {
         viewModelScope.launch {
             repository.saveLanguage(selectedLanguage)
         }
     }
-    fun setLoadingUiState(){
-        _uiStateUser.value = UiState.Loading
-    }
 
     fun saveDarkMode(newValue: Boolean) {
         viewModelScope.launch {
             repository.saveDarkTheme(newValue)
-        }
-    }
-
-    
-    fun getUser() {
-        viewModelScope.launch {
-            _uiStateUser.value = UiState.Loading
-            repository.getUser().catch {
-                _uiStateUser.value = UiState.Error(it.message.toString())
-            }.collect {
-                _uiStateUser.value = UiState.Success(it)
-            }
         }
     }
 }

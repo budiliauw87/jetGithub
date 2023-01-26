@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.liau.jetgithub.BuildConfig
 import com.liau.jetgithub.core.data.network.request.RequestGithub
 import com.liau.jetgithub.core.data.network.response.EdgesItem
+import com.liau.jetgithub.ui.util.Util
 
 /**
  * Created by Budiman on 24/01/2023.
@@ -12,20 +13,20 @@ import com.liau.jetgithub.core.data.network.response.EdgesItem
  * Github github.com/budiliauw87
  */
 class GithubPagingSource(
+    query: String,
     private val apiService: ApiService,
 ) : PagingSource<String, EdgesItem>() {
+    val queryUsername = query
     val token = BuildConfig.TOKEN
     override suspend fun load(params: LoadParams<String>): LoadResult<String, EdgesItem> {
         return try {
             val cursor = params.key ?: ""
-            val queryGit = getQueryGraph("", cursor, 0)
+            val queryGit = Util.getQueryGraph(queryUsername, cursor, 0)
             val response = apiService.getUsers(token, RequestGithub(queryGit))
-            val list = response.data?.search?.edges ?: listOf<EdgesItem>()
+            val list = response.data?.search?.edges ?: listOf()
             val nextCursor: String? = list.last().cursor
             LoadResult.Page(
-                data = list,
-                prevKey = params.key,
-                nextKey = nextCursor
+                data = list, prevKey = params.key, nextKey = nextCursor
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)
@@ -36,32 +37,5 @@ class GithubPagingSource(
         return null
     }
 
-    fun getQueryGraph(query: String, lastCursor: String, method: Int): String {
-        val resultQueryGraph: String
-        val querySearch: String
-        val cursorAfter: String
-        when (method) {
-            0 -> {
-                querySearch = if (query.isEmpty()) "language:java" else query
-                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
-                resultQueryGraph =
-                    "query { search( query: \"" + querySearch + "\", type: USER, first:10" + cursorAfter +
-                            ") {userCount edges { node { ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories { totalCount }}}cursor}}}"
-            }
-            1 -> {
-                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
-                resultQueryGraph =
-                    "query { user( login: \"" + query + "\" ) { followers( first:10" + cursorAfter +
-                            " ) { edges{ node{ ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories{ totalCount }}} cursor}}}}"
-            }
-            2 -> {
-                cursorAfter = if (lastCursor.isEmpty()) "" else ",after:\"$lastCursor\""
-                resultQueryGraph =
-                    "query { user( login: \"" + query + "\" ) { following( first:10" + cursorAfter +
-                            " ) { edges{ node{ ... on User { id login name location email company avatarUrl followers " + "{ totalCount } following { totalCount } repositories{ totalCount }}} cursor}}}}"
-            }
-            else -> resultQueryGraph = ""
-        }
-        return resultQueryGraph
-    }
+
 }

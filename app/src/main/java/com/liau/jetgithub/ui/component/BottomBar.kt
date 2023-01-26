@@ -9,12 +9,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.liau.jetgithub.R
 import com.liau.jetgithub.navigation.NavigationItem
 import com.liau.jetgithub.navigation.Screen
@@ -50,8 +48,6 @@ fun BottomBar(
             ),
         )
         BottomNavigation {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
             navigationItems.forEach { item ->
                 BottomNavigationItem(
                     icon = {
@@ -67,8 +63,8 @@ fun BottomBar(
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
-                            launchSingleTop = true
                             restoreState = true
+                            launchSingleTop = true
                         }
                     }
                 )

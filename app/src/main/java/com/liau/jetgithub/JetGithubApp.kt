@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,13 +14,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.liau.jetgithub.core.model.ConfigApp
 import com.liau.jetgithub.navigation.Screen
 import com.liau.jetgithub.ui.component.BottomBar
 import com.liau.jetgithub.ui.component.SearchBar
+import com.liau.jetgithub.ui.detail.DetailScreen
 import com.liau.jetgithub.ui.home.HomeScreen
 import com.liau.jetgithub.ui.setting.FavoriteScreen
 import com.liau.jetgithub.ui.setting.SettingScreen
@@ -35,8 +39,8 @@ import com.liau.jetgithub.ui.setting.SettingScreen
 fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
     val navController: NavHostController = rememberNavController()
     var stateTitle by remember { mutableStateOf("Home") }
-    var querySearch by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
+    var querySearch by remember { mutableStateOf("") }
     val context = (LocalContext.current) as Activity
     var lastBackPressed: Long by remember { mutableStateOf(0) }
     Scaffold(
@@ -48,6 +52,18 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
                         color = Color.White,
                         modifier = Modifier.fillMaxWidth()
                     )
+                },
+                navigationIcon = if (stateTitle == stringResource(R.string.detail_user)) {
+                    {
+                        IconButton(onClick = { navController.navigateUp() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    }
+                } else {
+                    null
                 },
                 actions = {
                     if (stateTitle == stringResource(R.string.menu_home)) {
@@ -64,10 +80,9 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
                                     } else {
                                         isSearching = isSearching != true
                                     }
-
                                 },
                                 onDone = {
-                                    //Toast.makeText(context, querySearch, Toast.LENGTH_SHORT).show()
+                                    viewModel.querySearchFlow.value = querySearch
                                 }
                             )
                         } else {
@@ -85,7 +100,9 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
             )
         },
         bottomBar = {
-            BottomBar(navController = navController)
+            if (stateTitle != stringResource(R.string.detail_user))
+                BottomBar(navController = navController)
+
         }
     ) {
         NavHost(
@@ -115,6 +132,9 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
                             }
                         }
                     },
+                    navigateToDetail = { loginId ->
+                        navController.navigate(Screen.DetailUser.createRoute(loginId))
+                    }
                 )
             }
             composable(Screen.Favorite.route) {
@@ -124,6 +144,15 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
             composable(Screen.Settings.route) {
                 stateTitle = stringResource(R.string.menu_settings)
                 SettingScreen(viewModel, configApp)
+            }
+
+            composable(
+                route = Screen.DetailUser.route,
+                arguments = listOf(navArgument("loginId") { type = NavType.StringType }),
+            ) {
+                val loginId = it.arguments?.getString("loginId") ?: ""
+                stateTitle = stringResource(R.string.detail_user)
+                DetailScreen(loginId = loginId)
             }
         }
     }

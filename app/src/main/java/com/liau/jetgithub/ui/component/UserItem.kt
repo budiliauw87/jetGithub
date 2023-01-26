@@ -26,11 +26,13 @@ import com.liau.jetgithub.core.data.network.response.Node
  * Github github.com/budiliauw87
  */
 @Composable
-fun UserItem(nodeItem: Node?) {
+fun UserItem(
+    nodeItem: Node?,
+    navigateToDetail: (String) -> Unit
+) {
     val usernameItem = nodeItem?.login ?: "Null"
     val emailItem = nodeItem?.email ?: "Null"
     val companyItem = nodeItem?.company ?: "Null"
-
     val totalFollower = nodeItem?.followers?.totalCount ?: 0
     val totalFollowing = nodeItem?.following?.totalCount ?: 0
     val totalRepository = nodeItem?.repositories?.totalCount ?: 0
@@ -41,7 +43,7 @@ fun UserItem(nodeItem: Node?) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {}
+                .clickable { navigateToDetail(usernameItem) }
                 .padding(16.dp)
         ) {
             AsyncImage(

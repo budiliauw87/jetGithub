@@ -37,6 +37,7 @@ import com.liau.jetgithub.ui.theme.BlueGrey50
 fun HomeScreen(
     viewModel: MainViewModel,
     onBackPressed: () -> Unit,
+    navigateToDetail: (String) -> Unit
 ) {
     val lazyPagingItems = viewModel.userPaging.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
@@ -46,10 +47,13 @@ fun HomeScreen(
         lazyPagingItems.refresh()
     })
     Box(
-        modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize()
+        modifier = Modifier
+            .pullRefresh(pullRefreshState)
+            .fillMaxSize()
     ) {
         if (!refreshing) {
             if (isErrorRefresh) {
+
                 ErrorContent(
                     titleError = stringResource(R.string.something_error),
                     iconError = Icons.Default.ErrorOutline,
@@ -58,13 +62,14 @@ fun HomeScreen(
             } else {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .background(color = BlueGrey50)
                 ) {
 
                     itemsIndexed(lazyPagingItems) { _, item ->
                         if (item != null) {
-                            UserItem(item.node)
+                            UserItem(item.node, navigateToDetail)
                         }
                     }
 
@@ -73,7 +78,8 @@ fun HomeScreen(
                             is LoadState.Loading -> { //loading when loadmore
                                 item {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
                                             .padding(vertical = 16.dp)
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
