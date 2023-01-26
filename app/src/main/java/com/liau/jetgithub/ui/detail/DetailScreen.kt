@@ -1,6 +1,7 @@
 package com.liau.jetgithub.ui.detail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
@@ -10,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,41 +29,41 @@ fun DetailScreen(loginId: String) {
         "Followers",
         "Following",
     )
-
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
-            Text("Header")
+            DetailHeader()
         }
         stickyHeader {
-
             TabRow(
                 selectedTabIndex = tabIndex,
                 modifier = Modifier.fillMaxWidth().height(80.dp)
             ) {
                 tabData.forEachIndexed { index, text ->
-                    Tab(selected = tabIndex == index, onClick = {
-                        tabIndex = index
-                    }, text = {
-                        Column(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "99999",
-                                style = MaterialTheme.typography.h5,
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
-                                    .padding(bottom = 5.dp)
-                            )
-                            Text(
-                                text = "follower",
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
-                            )
-                        }
+                    Tab(
+                        selected = tabIndex == index,
+                        onClick = {
+                            tabIndex = index
+                        }, text = {
+                            Column(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "99999",
+                                    style = MaterialTheme.typography.h5,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(bottom = 5.dp)
+                                )
+                                Text(
+                                    text = "follower",
+                                    style = MaterialTheme.typography.body2,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                )
+                            }
 
-                    })
+                        })
                 }
             }
 
@@ -74,46 +76,6 @@ fun DetailScreen(loginId: String) {
             )
         }
     }
-    /*
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        TabRow(
-            selectedTabIndex = tabIndex,
-            modifier = Modifier.fillMaxWidth().height(80.dp)
-        ) {
-            tabData.forEachIndexed { index, text ->
-                Tab(selected = tabIndex == index, onClick = {
-                    tabIndex = index
-                }, text = {
-                    Column(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "99999",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                                .padding(bottom = 5.dp)
-                        )
-                        Text(
-                            text = "follower",
-                            style = MaterialTheme.typography.body2,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                    }
-
-                })
-            }
-        }
-        Text(
-            text = "$loginId $tabIndex",
-            modifier = Modifier.padding(16.dp)
-        )
-    }*/
-
 }
 
 @Preview(showBackground = true, device = Devices.PIXEL_4)
