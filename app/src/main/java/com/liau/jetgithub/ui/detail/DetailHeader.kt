@@ -1,14 +1,16 @@
 package com.liau.jetgithub.ui.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,11 +18,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.liau.jetgithub.R
+import com.liau.jetgithub.core.data.local.entity.User
 
 
 /**
@@ -30,7 +31,7 @@ import com.liau.jetgithub.R
  */
 
 @Composable
-fun DetailHeader() {
+fun DetailHeader(user: User?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,7 +41,7 @@ fun DetailHeader() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
-            model = "",
+            model = user?.avatarUrl,
             contentDescription = stringResource(id = R.string.thumbnail_avatar),
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -49,13 +50,13 @@ fun DetailHeader() {
                 .clip(CircleShape)
         )
         Text(
-            text = "Tester",
+            text = user?.login ?: "Null",
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.surface,
             modifier = Modifier.padding(top = 16.dp)
         )
         Text(
-            text = "subtitle",
+            text = user?.name ?: "Null",
             style = MaterialTheme.typography.h6,
             color = MaterialTheme.colors.surface,
         )
@@ -71,7 +72,7 @@ fun DetailHeader() {
             )
 
             Text(
-                text = "City name",
+                text = user?.location ?: "Null",
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.surface,
                 modifier = Modifier.padding(start = 8.dp)
@@ -86,25 +87,30 @@ fun DetailHeader() {
             )
 
             Text(
-                text = "Building name",
+                text = user?.company ?: "Null",
                 style = MaterialTheme.typography.subtitle2,
                 color = MaterialTheme.colors.surface,
             )
         }
+        user?.email?.isNotEmpty().run {
 
-        Row (verticalAlignment = Alignment.CenterVertically){
-            Icon(
-                imageVector = Icons.Filled.Email,
-                contentDescription = "Email",
-                tint = MaterialTheme.colors.surface
-            )
+        }
+        val email =  user?.email ?: ""
+        if(email.isNotEmpty()){
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Email,
+                    contentDescription = "Email",
+                    tint = MaterialTheme.colors.surface
+                )
 
-            Text(
-                text = "JhonDoe@example.com",
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.surface,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
+                Text(
+                    text = email,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.surface,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
         }
 
         Row(
@@ -117,9 +123,9 @@ fun DetailHeader() {
                 contentDescription = "Repositories",
                 tint = MaterialTheme.colors.surface
             )
-
+            val totalRepo = user?.repositories ?: 0
             Text(
-                text = "Repositori 888999",
+                text = "Repositories $totalRepo",
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.surface,
                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -128,8 +134,3 @@ fun DetailHeader() {
     }
 }
 
-@Preview(showBackground = true, device = Devices.PIXEL_4)
-@Composable
-fun DetailHeaderPreview() {
-    DetailHeader()
-}

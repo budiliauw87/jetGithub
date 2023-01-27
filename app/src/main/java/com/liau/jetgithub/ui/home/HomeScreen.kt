@@ -21,6 +21,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.liau.jetgithub.MainViewModel
 import com.liau.jetgithub.R
+import com.liau.jetgithub.core.data.local.entity.User
 import com.liau.jetgithub.ui.component.ErrorLoadItem
 import com.liau.jetgithub.ui.component.UserItem
 import com.liau.jetgithub.ui.error.ErrorContent
@@ -37,7 +38,7 @@ import com.liau.jetgithub.ui.theme.BlueGrey50
 fun HomeScreen(
     viewModel: MainViewModel,
     onBackPressed: () -> Unit,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (User) -> Unit
 ) {
     val lazyPagingItems = viewModel.userPaging.collectAsLazyPagingItems()
     val listState = rememberLazyListState()

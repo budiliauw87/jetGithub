@@ -1,4 +1,10 @@
-package com.liau.jetgithub.ui.util
+package com.liau.jetgithub.util
+
+import com.liau.jetgithub.core.data.local.entity.User
+import com.liau.jetgithub.core.data.network.response.Followers
+import com.liau.jetgithub.core.data.network.response.Following
+import com.liau.jetgithub.core.data.network.response.Node
+import com.liau.jetgithub.core.data.network.response.Repositories
 
 /**
  * Created by Budiman on 26/01/2023.
@@ -32,6 +38,35 @@ abstract class Util {
             }
             return resultQueryGraph
         }
+
+        fun mappingNodeToUser(nodeItem: Node?): User {
+            return User(
+                login = nodeItem?.login ?: "Null",
+                name = (nodeItem?.name ?: "Null") as String,
+                location = (nodeItem?.location ?: "Null") as String,
+                email = nodeItem?.email ?: "Null",
+                company = (nodeItem?.company ?: "Null") as String,
+                avatarUrl = nodeItem?.avatarUrl ?: "",
+                follower = nodeItem?.followers?.totalCount ?: 0,
+                following = nodeItem?.following?.totalCount ?: 0,
+                repositories = nodeItem?.repositories?.totalCount ?: 0,
+            )
+        }
+
+        fun mappingUserToNode(user: User?): Node {
+            val asd = Following(totalCount = user?.follower ?: 0)
+            return Node(
+                login = user?.login ?: "Null",
+                name = (user?.name ?: "Null") as String,
+                location = (user?.location ?: "Null") as String,
+                email = user?.email ?: "Null",
+                company = (user?.company ?: "Null") as String,
+                avatarUrl = user?.avatarUrl ?: "",
+                followers = Followers(totalCount = user?.follower ?: 0),
+                following = Following(totalCount = user?.follower ?: 0),
+                repositories = Repositories(totalCount = user?.repositories ?: 0),
+            )
+        }
     }
-    
+
 }

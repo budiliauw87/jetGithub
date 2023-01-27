@@ -9,7 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.liau.jetgithub.MainViewModel
 import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.data.local.AppPreferences
+import com.liau.jetgithub.core.data.local.database.JetDatabase
 import com.liau.jetgithub.core.data.network.ApiConfig
+import com.liau.jetgithub.util.AppExecutors
+
 /**
  * Created by Budiman on 19/01/2023.
  * Email budiliauw87@gmail.com
@@ -41,8 +44,10 @@ class ViewModelFactory(private val repo: GitRepository) : ViewModelProvider.NewI
 
 object Injector {
     fun provideRepository(context: Context): GitRepository {
+        val database = JetDatabase.getInstance(context)
+        val appExecutors = AppExecutors()
         val apiService = ApiConfig.provideApiService()
         val preferences = AppPreferences.getInstance(context.dataStore)
-        return GitRepository.getInstance(apiService, preferences)
+        return GitRepository.getInstance(apiService, preferences,appExecutors, database)
     }
 }

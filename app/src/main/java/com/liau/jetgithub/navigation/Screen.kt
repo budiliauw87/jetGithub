@@ -9,7 +9,5 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Favorite : Screen("favorite")
     object Settings : Screen("settings")
-    object DetailUser : Screen("detail/login={loginId}") {
-        fun createRoute(loginId: String) = "detail/login=$loginId"
-    }
+    object DetailUser : Screen("detail")
 }

@@ -5,7 +5,7 @@ import androidx.paging.PagingState
 import com.liau.jetgithub.BuildConfig
 import com.liau.jetgithub.core.data.network.request.RequestGithub
 import com.liau.jetgithub.core.data.network.response.EdgesItem
-import com.liau.jetgithub.ui.util.Util
+import com.liau.jetgithub.util.Util
 
 /**
  * Created by Budiman on 24/01/2023.

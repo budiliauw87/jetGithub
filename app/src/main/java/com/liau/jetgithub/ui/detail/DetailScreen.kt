@@ -1,7 +1,6 @@
 package com.liau.jetgithub.ui.detail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
@@ -11,10 +10,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.liau.jetgithub.MainViewModel
+import com.liau.jetgithub.core.data.local.entity.User
+import com.liau.jetgithub.ui.component.TabItem
 
 /**
  * Created by Budiman on 25/01/2023.
@@ -23,22 +22,33 @@ import androidx.compose.ui.unit.dp
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DetailScreen(loginId: String) {
+fun DetailScreen(
+    viewModel: MainViewModel,
+    selectedUser: User?
+) {
+
+    //val user = viewModel.selectedUser.collectAsState().value
+    val user = selectedUser
+    val totalFollowing = user?.following ?: 0
+    val totalFollower = user?.follower ?: 0
+
     var tabIndex by remember { mutableStateOf(0) }
     val tabData = listOf(
-        "Followers",
-        "Following",
+        TabItem(title = "Followers", total = totalFollower),
+        TabItem(title = "Following", total = totalFollowing),
     )
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
-            DetailHeader()
+            DetailHeader(user)
         }
         stickyHeader {
             TabRow(
                 selectedTabIndex = tabIndex,
-                modifier = Modifier.fillMaxWidth().height(80.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
             ) {
-                tabData.forEachIndexed { index, text ->
+                tabData.forEachIndexed { index, item ->
                     Tab(
                         selected = tabIndex == index,
                         onClick = {
@@ -51,13 +61,14 @@ fun DetailScreen(loginId: String) {
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "99999",
-                                    style = MaterialTheme.typography.h5,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    text = item.total.toString(),
+                                    style = MaterialTheme.typography.h6,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
                                         .padding(bottom = 5.dp)
                                 )
                                 Text(
-                                    text = "follower",
+                                    text = item.title,
                                     style = MaterialTheme.typography.body2,
                                     modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
@@ -72,14 +83,10 @@ fun DetailScreen(loginId: String) {
             Text(
                 it.toString(),
                 style = MaterialTheme.typography.h4,
-                modifier = Modifier.fillMaxWidth().padding(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             )
         }
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_4)
-@Composable
-fun DetailScreenPreview() {
-    DetailScreen("Tester working")
 }

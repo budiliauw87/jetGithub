@@ -18,7 +18,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.liau.jetgithub.R
+import com.liau.jetgithub.core.data.local.entity.User
 import com.liau.jetgithub.core.data.network.response.Node
+import com.liau.jetgithub.util.Util
 
 /**
  * Created by Budiman on 24/01/2023.
@@ -28,14 +30,9 @@ import com.liau.jetgithub.core.data.network.response.Node
 @Composable
 fun UserItem(
     nodeItem: Node?,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (User) -> Unit
 ) {
-    val usernameItem = nodeItem?.login ?: "Null"
-    val emailItem = nodeItem?.email ?: "Null"
-    val companyItem = nodeItem?.company ?: "Null"
-    val totalFollower = nodeItem?.followers?.totalCount ?: 0
-    val totalFollowing = nodeItem?.following?.totalCount ?: 0
-    val totalRepository = nodeItem?.repositories?.totalCount ?: 0
+    val user: User = Util.mappingNodeToUser(nodeItem)
     Card(
         elevation = 0.dp,
         modifier = Modifier.padding(bottom = 8.dp)
@@ -43,11 +40,11 @@ fun UserItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navigateToDetail(usernameItem) }
+                .clickable { navigateToDetail(user) }
                 .padding(16.dp)
         ) {
             AsyncImage(
-                model = nodeItem?.avatarUrl,
+                model = user.avatarUrl,
                 contentDescription = stringResource(id = R.string.thumbnail_avatar),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -61,13 +58,13 @@ fun UserItem(
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = usernameItem,
+                    text = user.login,
                     style = MaterialTheme.typography.h6,
                     color = MaterialTheme.colors.onBackground,
                 )
 
                 Text(
-                    text = emailItem,
+                    text = user.email,
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onBackground,
                 )
@@ -84,7 +81,7 @@ fun UserItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = totalFollower.toString(),
+                            text = user.follower.toString(),
                             style = MaterialTheme.typography.h6,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.onBackground,
@@ -100,7 +97,7 @@ fun UserItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = totalFollowing.toString(),
+                            text = user.following.toString(),
                             style = MaterialTheme.typography.h6,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.onBackground,
@@ -114,7 +111,7 @@ fun UserItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = totalRepository.toString(),
+                            text = user.repositories.toString(),
                             style = MaterialTheme.typography.h6,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.onBackground,
@@ -124,7 +121,7 @@ fun UserItem(
                     }
                 }
                 Text(
-                    text = companyItem.toString(),
+                    text = user.company,
                     style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
