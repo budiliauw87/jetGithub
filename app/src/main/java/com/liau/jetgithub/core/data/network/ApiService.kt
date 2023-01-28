@@ -2,6 +2,8 @@ package com.liau.jetgithub.core.data.network
 
 import com.liau.jetgithub.core.data.network.request.RequestGithub
 import com.liau.jetgithub.core.data.network.response.Response
+import com.liau.jetgithub.core.data.network.response.follower.FollowerResponse
+import com.liau.jetgithub.core.data.network.response.following.FollowingResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -17,5 +19,17 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body params: RequestGithub
     ):Response
+
+    @POST("graphql")
+    suspend fun getFollowers(
+        @Header("Authorization") token: String,
+        @Body params: RequestGithub
+    ):FollowerResponse
+
+    @POST("graphql")
+    suspend fun getFollowing(
+        @Header("Authorization") token: String,
+        @Body params: RequestGithub
+    ): FollowingResponse
 
 }

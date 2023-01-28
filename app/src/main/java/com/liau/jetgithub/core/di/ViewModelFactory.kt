@@ -11,6 +11,7 @@ import com.liau.jetgithub.core.data.GitRepository
 import com.liau.jetgithub.core.data.local.AppPreferences
 import com.liau.jetgithub.core.data.local.database.JetDatabase
 import com.liau.jetgithub.core.data.network.ApiConfig
+import com.liau.jetgithub.ui.detail.DetailViewModel
 import com.liau.jetgithub.util.AppExecutors
 
 /**
@@ -26,6 +27,8 @@ class ViewModelFactory(private val repo: GitRepository) : ViewModelProvider.NewI
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel(repo) as T
+        }else if( modelClass.isAssignableFrom(DetailViewModel::class.java)){
+            return DetailViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

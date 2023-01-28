@@ -70,7 +70,6 @@ data class Following(
 
 @Parcelize
 data class Search(
-
 	@field:SerializedName("userCount")
 	val userCount: Int? = null,
 

@@ -75,7 +75,7 @@ fun DetailHeader(user: User?) {
                 text = user?.location ?: "Null",
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.surface,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp).widthIn(max=150.dp)
 
             )
 
@@ -90,6 +90,7 @@ fun DetailHeader(user: User?) {
                 text = user?.company ?: "Null",
                 style = MaterialTheme.typography.subtitle2,
                 color = MaterialTheme.colors.surface,
+                modifier = Modifier.widthIn(max=150.dp)
             )
         }
         user?.email?.isNotEmpty().run {

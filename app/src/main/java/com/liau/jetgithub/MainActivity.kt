@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
                 is UiState.Error -> {
                     false
                 }
+                else -> false
+
             }
         }
 

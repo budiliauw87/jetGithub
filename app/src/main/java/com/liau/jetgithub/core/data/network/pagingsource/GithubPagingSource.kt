@@ -1,8 +1,9 @@
-package com.liau.jetgithub.core.data.network
+package com.liau.jetgithub.core.data.network.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.liau.jetgithub.BuildConfig
+import com.liau.jetgithub.core.data.network.ApiService
 import com.liau.jetgithub.core.data.network.request.RequestGithub
 import com.liau.jetgithub.core.data.network.response.EdgesItem
 import com.liau.jetgithub.util.Util
@@ -13,15 +14,16 @@ import com.liau.jetgithub.util.Util
  * Github github.com/budiliauw87
  */
 class GithubPagingSource(
-    query: String,
+    private val query: String,
+    private val methodQuery : Int,
     private val apiService: ApiService,
-) : PagingSource<String, EdgesItem>() {
-    val queryUsername = query
+
+    ) : PagingSource<String, EdgesItem>() {
     val token = BuildConfig.TOKEN
     override suspend fun load(params: LoadParams<String>): LoadResult<String, EdgesItem> {
         return try {
             val cursor = params.key ?: ""
-            val queryGit = Util.getQueryGraph(queryUsername, cursor, 0)
+            val queryGit = Util.getQueryGraph(query, cursor, methodQuery)
             val response = apiService.getUsers(token, RequestGithub(queryGit))
             val list = response.data?.search?.edges ?: listOf()
             val nextCursor: String? = list.last().cursor

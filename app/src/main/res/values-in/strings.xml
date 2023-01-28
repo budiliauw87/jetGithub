@@ -18,6 +18,6 @@
     <string name="thumbnail_avatar">Avatar thumbnail</string>
     <string name="null_string">Null</string>
     <string name="load_failed">Gagal memuat</string>
-    <string name="detail_user">Detail User</string>
-    <string name="empty_data">Empty data</string>
+    <string name="detail_user">Detail Penguna</string>
+    <string name="empty_data">Tidak ada data</string>
 </resources>

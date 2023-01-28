@@ -35,7 +35,8 @@ import com.liau.jetgithub.util.Util
 @Composable
 fun FavoriteScreen(
     viewModel: MainViewModel,
-    navigateToDetail: (User) -> Unit
+    navigateToDetail: (User) -> Unit,
+    stateFavorite: (Boolean)-> Unit,
 ) {
     val lazyPagingItems = viewModel.favoritePaging.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
@@ -43,6 +44,7 @@ fun FavoriteScreen(
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         lazyPagingItems.refresh()
     })
+    stateFavorite(true)
     Box(
         modifier = Modifier
             .pullRefresh(pullRefreshState)

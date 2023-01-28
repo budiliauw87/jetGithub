@@ -1,6 +1,5 @@
 package com.liau.jetgithub
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -20,11 +19,12 @@ import kotlinx.coroutines.launch
  * Budiliauw87@gmail.com
  */
 class MainViewModel(private val repository: GitRepository) : ViewModel() {
-    val querySearchFlow: MutableStateFlow<String> = repository.querySearchFlow
+    val querySearchFlow = repository.querySearchFlow
     val userPaging = repository.items.cachedIn(viewModelScope)
     val favoritePaging = repository.favorities.cachedIn(viewModelScope)
     val selectedUser = MutableStateFlow<User?>(null)
-    val isFavorite = MutableStateFlow(false);
+    var isFavorite = MutableStateFlow(false)
+
     val uiState: StateFlow<UiState<ConfigApp>> = repository.getPrefApp().map {
         UiState.Success(it)
     }.stateIn(
@@ -57,8 +57,8 @@ class MainViewModel(private val repository: GitRepository) : ViewModel() {
     }
 
     fun setSelectedUser(user: User) {
-        selectedUser.value = user
         CoroutineScope(Dispatchers.IO).launch {
+            selectedUser.value = user
             val countUser = repository.countUser(user.login)
             isFavorite.value = (countUser > 0)
         }

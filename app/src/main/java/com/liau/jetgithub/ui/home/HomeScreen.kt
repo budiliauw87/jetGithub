@@ -54,7 +54,6 @@ fun HomeScreen(
     ) {
         if (!refreshing) {
             if (isErrorRefresh) {
-
                 ErrorContent(
                     titleError = stringResource(R.string.something_error),
                     iconError = Icons.Default.ErrorOutline,

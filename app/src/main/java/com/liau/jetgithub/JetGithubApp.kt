@@ -45,8 +45,7 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
     val context = (LocalContext.current) as Activity
     var lastBackPressed: Long by remember { mutableStateOf(0) }
     val selectedUser = viewModel.selectedUser.collectAsState().value
-    var isFavorite = viewModel.isFavorite.collectAsState().value
-
+    val isFavorite = viewModel.isFavorite.collectAsState().value
 
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -56,7 +55,6 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
         }, navigationIcon = if (stateTitle == stringResource(R.string.detail_user)) {
             {
                 IconButton(onClick = {
-                    viewModel.selectedUser.value = null
                     navController.navigateUp()
                 }) {
                     Icon(
@@ -102,7 +100,6 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
         if (stateTitle == stringResource(id = R.string.detail_user)) {
             ExtendedFloatingActionButton(onClick = {
                 viewModel.setFavorite()
-                isFavorite = !isFavorite
             }, icon = {
                 Icon(
                     Icons.Filled.Favorite,
@@ -145,9 +142,11 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
             }
             composable(Screen.Favorite.route) {
                 stateTitle = stringResource(R.string.menu_favorite)
-                FavoriteScreen(viewModel,navigateToDetail = { user ->
+                FavoriteScreen(viewModel, navigateToDetail = { user ->
                     viewModel.selectedUser.value = user
                     navController.navigate(Screen.DetailUser.route)
+                }, stateFavorite = {
+                    viewModel.isFavorite.value = it
                 })
             }
             composable(Screen.Settings.route) {
@@ -156,7 +155,7 @@ fun JetGithubApp(viewModel: MainViewModel, configApp: ConfigApp) {
             }
             composable(route = Screen.DetailUser.route) {
                 stateTitle = stringResource(R.string.detail_user)
-                DetailScreen(viewModel, selectedUser)
+                DetailScreen(selectedUser)
             }
         }
     }
