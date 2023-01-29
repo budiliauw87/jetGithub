@@ -63,7 +63,7 @@ abstract class Util {
                 company = (user?.company ?: "Null") as String,
                 avatarUrl = user?.avatarUrl ?: "",
                 followers = Followers(totalCount = user?.follower ?: 0),
-                following = Following(totalCount = user?.follower ?: 0),
+                following = Following(totalCount = user?.following ?: 0),
                 repositories = Repositories(totalCount = user?.repositories ?: 0),
             )
         }
